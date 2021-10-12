@@ -2,8 +2,10 @@
   <div class="balance">
     <h1>BALANCE {{ETH * lastPriceETH + BTC * lastPriceBTC + '$'}}</h1>
     <canvas ref="canvas"></canvas>
-    <button v-on:click="addBTC">+1 BTC</button>
-    <button v-on:click="addETH">+1 ETH</button>
+    <div class="btn">
+      <button v-on:click="addBTC">+1 BTC</button>
+      <button v-on:click="addETH">+1 ETH</button>
+    </div>
   </div>
 </template>
 
@@ -107,5 +109,7 @@ export default {
 </script>
 
 <style>
-
+.balance{
+  max-width: 600px;
+}
 </style>

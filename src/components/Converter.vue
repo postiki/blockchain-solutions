@@ -2,55 +2,57 @@
   <div class="converter">
     <div class="charts">
       <BTCChart :chart-data="chartBTC"></BTCChart>
+      <div class="convert">
+        <select @change="convert" v-model="selectOf">
+          <option v-bind:value="0">of USD</option>
+          <option v-bind:value="1">of BTC</option>
+          <option v-bind:value="2">of ETH</option>
+        </select>
+        <input @change="convert" v-model="convertOf"/>
+        <hr/>
+        <select @change="convert" v-model="selectTo">
+          <option v-bind:value="0">to USD</option>
+          <option v-bind:value="1">to BTC</option>
+          <option v-bind:value="2">to ETH</option>
+        </select>
+        <input @change="convert" v-model="convertTo"/>
+      </div>
       <ETHChart :chart-data="chartETH"></ETHChart>
     </div>
-    <div class="convert">
-      <select @change="convert" v-model="selectOf">
-        <option>of USD</option>
-        <option>of BTC</option>
-        <option>of ETH</option>
-      </select>
-      <p>{{ convertOf }}</p>
-      <select  @change="convert" v-model="selectTo">
-        <option>to USD</option>
-        <option>to BTC</option>
-        <option>to ETH</option>
-      </select>
-      <p>{{ convertTo }}</p>
-    </div>
-    <Balance/>
   </div>
 </template>
 
 <script>
 import BTCChart from '../components/Charts/BTCChart'
 import ETHChart from '../components/Charts/ETHChart'
-import Balance from "@/components/Balance";
-import axios from "axios";
+import axios from 'axios'
 
 export default {
   name: 'Converter',
   components: {
     BTCChart,
     ETHChart,
-    Balance
   },
   data: () => ({
     dateRate: [],
-    btc: [],
+
+    btc: null,
     chartBTC: null,
     lastPriceBTC: null,
-    eth: [],
+
+    eth: null,
     chartETH: null,
     lastPriceETH: null,
-    lasPriceUSD: 1,
-    selectOf: 'USD',
-    selectTo: 'BTC',
+
+    selectOf: 0,
+    selectTo: 2,
+
     convertOf: 1,
     convertTo: null,
-    test: null
+
+    convertRate: []
   }),
-  beforeMount: function () {
+  beforeMount: async function () {
     this.calcDate()
   },
   mounted: async function () {
@@ -68,11 +70,21 @@ export default {
         })
         .then(() => this.lastPriceETH = this.eth[this.eth.length - 1])
         .finally(() => this.setUpETH())
+    this.setUp()
     this.setUpRate()
+    this.convert()
   },
   methods: {
+    setUp() {
+      this.convertRate.push(1)
+      this.convertRate.push(this.btc[this.btc.length - 1])
+      this.convertRate.push(this.eth[this.eth.length - 1])
+
+    },
     setUpRate() {
-      this.convertTo = (this.lastPriceBTC * this.convertOf) / this.lasPriceUSD
+      this.convertRate.push(1)
+      this.convertRate.push(this.lastPriceBTC / 1)
+      this.convertRate.push(this.lastPriceETH / 1)
     },
     setUpBTC() {
       this.chartBTC = {
@@ -93,7 +105,7 @@ export default {
           label: ['ETH to USD'],
           data: this.eth,
           fill: false,
-          borderColor: 'rgb(255, 99, 132)',
+          borderColor: 'rgb(99,125,255)',
           tension: 0.5
         }]
       }
@@ -106,17 +118,28 @@ export default {
       }
     },
     convert() {
-      if (this.selectOf === 'to BTC')  {
-        this.convertTo =
-      }
-    },
+      this.convertTo = (this.convertRate[this.selectOf] * this.convertOf) / this.convertRate[this.selectTo]
+    }
   }
 }
 </script>
 <style>
 .converter {
+
+}
+
+.charts {
   display: flex;
-  flex-direction: row;
   justify-content: space-between;
+  align-items: center;
+}
+
+.convert {
+
+}
+@media (min-width: 320px) and (max-width: 428px){
+  .charts{
+    flex-direction: column;
+  }
 }
 </style>

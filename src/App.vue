@@ -1,17 +1,28 @@
 <template>
-  <div id="app">
-   <Converter />
+  <div id="app" >
+    <Converter />
+    <Balance />
   </div>
 </template>
 
 <script>
 import Converter from './components/Converter.vue'
+import Balance from "@/components/Balance";
 
 export default {
   name: 'App',
   components: {
+    Balance,
     Converter
-  }
+  },
+  data: () => ({
+
+  }),
+  mounted() {
+
+  },
+  methods: {}
+
 }
 </script>
 
